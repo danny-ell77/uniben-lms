@@ -1,6 +1,20 @@
 import { createTheme } from "@mui/material";
 
 export const theme = createTheme({
+  overrides: {
+    MUIRichTextEditor: {
+      root: {
+        marginTop: 20,
+        width: "100%",
+      },
+      editor: {
+        padding: "20px",
+        height: "200px",
+        maxHeight: "200px",
+        overflow: "auto",
+      },
+    },
+  },
   breakpoints: {
     values: {
       xs: 0,

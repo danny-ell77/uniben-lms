@@ -1,112 +1,139 @@
-import * as React from "react";
 import Box from "@mui/material/Box";
-import Collapse from "@mui/material/Collapse";
-import IconButton from "@mui/material/IconButton";
+import Container from "@mui/material/Container";
+import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
+import Modal from "@mui/material/Modal";
 import TableBody from "@mui/material/TableBody";
+import Typography from "@mui/material/Typography";
 import TableCell from "@mui/material/TableCell";
+import Divider from "@mui/material/Divider";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
+import TextField from "@mui/material/TextField";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
-// import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-// import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { useState } from "react";
 import { DashboardLayout } from "../../components/Layout";
+import { ToolBar } from "../../components/shared/ToolBar";
+import assignments from "../../__mocks__/assignmentData";
+import { Row } from "../../components/shared/TableRow";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import dynamic from "next/dynamic";
 
-function createData(name, calories, fat, carbs, protein, price) {
-  return {
-    name,
-    calories,
-    fat,
-    carbs,
-    protein,
-    price,
-    history: [
-      {
-        date: "2020-01-05",
-        customerId: "11091700",
-        amount: 3,
-      },
-      {
-        date: "2020-01-02",
-        customerId: "Anonymous",
-        amount: 1,
-      },
-    ],
-  };
-}
-
-const Row = (props) => {
-  const { row } = props;
-  const [open, setOpen] = React.useState(false);
-
-  return (
-    <React.Fragment>
-      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
-        <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <AiFillCaretUp /> : <AiFillCaretDown />}
-          </IconButton>
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {row.name}
-        </TableCell>
-        <TableCell>{row.calories}</TableCell>
-        <TableCell>{row.fat}</TableCell>
-        <TableCell>{row.carbs}</TableCell>
-        <TableCell>{row.protein}</TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
-                Question(s):
-              </Typography>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
-    </React.Fragment>
-  );
-};
-
-const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0, 3.99),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3, 4.99),
-  createData("Eclair", 262, 16.0, 24, 6.0, 3.79),
-  createData("Cupcake", 305, 3.7, 67, 4.3, 2.5),
-  createData("Gingerbread", 356, 16.0, 49, 3.9, 1.5),
-];
+const MUIRichTextEditor = dynamic(() => import("mui-rte"), { ssr: false });
 
 const Assignments = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const save = (data) => {
+    console.log(data);
+  };
+
+  const handleClose = () => setModalOpen(false);
   return (
-    <TableContainer component={Paper}>
-      <Table aria-label="collapsible table">
-        <TableHead>
-          <TableRow>
-            <TableCell />
-            <TableCell>Code</TableCell>
-            <TableCell>Instructor</TableCell>
-            <TableCell>Course</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>Due in</TableCell>
-            <TableCell>Marks</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <Row key={row.name} row={row} />
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Box
+      component="main"
+      sx={{
+        flexGrow: 1,
+        py: 8,
+      }}
+    >
+      <Container>
+        <ToolBar page="assignment" />
+        <TableContainer component={Paper}>
+          <Table aria-label="collapsible table">
+            <TableHead>
+              <TableRow>
+                <TableCell />
+                <TableCell>Code</TableCell>
+                <TableCell>Instructor</TableCell>
+                <TableCell>Course</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Due in</TableCell>
+                <TableCell>Marks</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {assignments.map((row) => (
+                <Row key={row.code} row={row} setModalOpen={setModalOpen} />
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Container>
+      <Box>
+        <Modal open={modalOpen} onClose={handleClose}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: 700,
+              bgcolor: "#FFFFFF",
+              boxShadow: 24,
+              borderRadius: 1,
+              p: 4,
+            }}
+          >
+            <Box
+              sx={{
+                top: 0,
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                Create Submission
+              </Typography>
+              <IconButton onClick={handleClose}>
+                <CloseIcon />
+              </IconButton>
+            </Box>
+            <Divider sx={{ margin: "15px 0" }} />
+            <form autoComplete="off" noValidate>
+              <Grid container spacing={3}>
+                <Grid item md={12} xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Title"
+                    name="title"
+                    required
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item md={12} xs={12}>
+                  <Box sx={{ mb: 10 }}>
+                    <MUIRichTextEditor
+                      readOnly={false}
+                      onSave={save}
+                      toolbar={true}
+                      label="Type something here..."
+                      inlineToolbar={true}
+                    />
+                  </Box>
+                </Grid>
+              </Grid>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  flexDirection: "row",
+                }}
+              >
+                <Button color="primary" variant="contained" sx={{ mx: 2 }}>
+                  Save Draft
+                </Button>
+                <Button color="primary" variant="contained">
+                  Submit
+                </Button>
+              </Box>
+            </form>
+          </Box>
+        </Modal>
+      </Box>
+    </Box>
   );
 };
 

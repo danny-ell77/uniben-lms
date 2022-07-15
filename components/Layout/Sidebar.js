@@ -21,6 +21,13 @@ import {
 // import { Users as UsersIcon } from "../icons/users";
 // import { XCircle as XCircleIcon } from "../icons/x-circle";
 // import { Logo } from "./logo";
+import PublishIcon from "@mui/icons-material/Publish";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import ForumIcon from "@mui/icons-material/Forum";
+import HomeIcon from "@mui/icons-material/Home";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import SettingsIcon from "@mui/icons-material/Settings";
+import FeedIcon from "@mui/icons-material/Feed";
 import { NavItem } from "./nav-item";
 import { AiOutlineClose } from "react-icons/ai";
 import { styled } from "@mui/material/styles";
@@ -28,33 +35,38 @@ import { styled } from "@mui/material/styles";
 const items = [
   {
     href: "/dashboard/",
-    // icon: <ChartBarIcon fontSize="small" />,
-    title: "Dashboard",
+    icon: <HomeIcon fontSize="small" />,
+    title: "Home",
   },
   {
     href: "/dashboard/assignments",
-    // icon: <UsersIcon fontSize="small" />,
+    icon: <AssignmentIcon fontSize="small" />,
     title: "Assignments",
   },
   {
     href: "/dashboard/submissions",
-    // icon: <ShoppingBagIcon fontSize="small" />,
+    icon: <PublishIcon fontSize="small" />,
     title: "Submissions",
   },
   {
     href: "/dashboard/chat",
-    // icon: <UserIcon fontSize="small" />,
+    icon: <ForumIcon fontSize="small" />,
     title: "Chat",
   },
   {
     href: "/dashboard/activity",
-    // icon: <LockIcon fontSize="small" />,
+    icon: <FeedIcon fontSize="small" />,
     title: "Activity",
   },
   {
     href: "/dashboard/settings",
-    // icon: <CogIcon fontSize="small" />,
+    icon: <SettingsIcon fontSize="small" />,
     title: "Settings",
+  },
+  {
+    href: "/dashboard/profile",
+    icon: <AccountCircleIcon fontSize="small" />,
+    title: "Profile",
   },
 ];
 

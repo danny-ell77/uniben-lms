@@ -10,6 +10,7 @@ import {
   IconButton,
   Popover,
 } from "@mui/material";
+import { useSelector } from "react-redux";
 
 const ArrowStyle = styled("span")(({ theme }) => ({
   [theme.breakpoints.up("sm")]: {
@@ -47,6 +48,7 @@ const MENU_OPTIONS = [
 ];
 
 const AccountPopover = () => {
+  const { user } = useSelector((state) => state.auth);
   const anchorRef = useRef(null);
 
   const [open, setOpen] = useState(null);
@@ -106,10 +108,10 @@ const AccountPopover = () => {
         <ArrowStyle className="arrow" />
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            Daniel Olah
+            {user.fullname}
           </Typography>
           <Typography variant="body2" sx={{ color: "text.secondary" }} noWrap>
-            danny@gmail.com
+            {user.email}
           </Typography>
         </Box>
 

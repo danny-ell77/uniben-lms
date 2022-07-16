@@ -1,7 +1,7 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import { apiSlice } from "./src/services";
-import authUserReducer from "./src/authSlice";
-import alertReducer from "./src/alertSlice";
+import { apiSlice } from "./lib/services";
+import authUserReducer from "./lib/authSlice";
+import alertReducer from "./lib/alertSlice";
 import {
   FLUSH,
   PAUSE,

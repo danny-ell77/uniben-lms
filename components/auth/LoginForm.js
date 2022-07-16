@@ -17,9 +17,9 @@ import { LoadingButton } from "@mui/lab";
 import { Link as NextLink } from "next/link";
 // component
 // import Iconify from "../../../components/Iconify";
-import { useLoginMutation } from "../../src/services/authAPI";
+import { useLoginMutation } from "../../lib/services/authAPI";
 import { useDispatch } from "react-redux";
-import { notify } from "../../src/alertSlice";
+import { notify } from "../../lib/alertSlice";
 
 export default function LoginForm() {
   const dispatch = useDispatch();

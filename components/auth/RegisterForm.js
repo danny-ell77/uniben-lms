@@ -18,7 +18,7 @@ import {
   Autocomplete,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
-import { useRegisterMutation } from "../../src/services/authAPI";
+import { useRegisterMutation } from "../../lib/services/authAPI";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 // component
 // import Iconify from "../../../components/Iconify";

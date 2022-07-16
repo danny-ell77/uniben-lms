@@ -18,7 +18,10 @@ export const Row = (props) => {
 
   return (
     <React.Fragment>
-      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+      <TableRow
+        sx={{ "& > *": { borderBottom: "unset" } }}
+        onClick={() => setOpen(!open)}
+      >
         <TableCell>
           <IconButton
             aria-label="expand row"

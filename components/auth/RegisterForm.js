@@ -1,6 +1,7 @@
 import * as Yup from "yup";
 import { useState } from "react";
 import Select from "react-select";
+import { useRouter } from "next/router";
 import { useFormik, Form, FormikProvider } from "formik";
 // import { useNavigate } from "react-router-dom";
 // material
@@ -33,7 +34,7 @@ const classOptions = [
 export default function RegisterForm() {
   const [register, { isLoading, isSuccess }] = useRegisterMutation();
   const [userCategory, setUserCategory] = useState("");
-  // const navigate = useNavigate();
+  const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -74,8 +75,10 @@ export default function RegisterForm() {
       confirm_password: "",
     },
     validationSchema: RegisterSchema,
-    onSubmit: (values) => {
-      console.log(values);
+    onSubmit: async (values) => {
+      delete values.confirm_password;
+      await register(values).unwrap();
+      router.push("/dashboard");
     },
   });
 

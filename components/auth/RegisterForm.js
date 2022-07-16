@@ -75,10 +75,18 @@ export default function RegisterForm() {
       confirm_password: "",
     },
     validationSchema: RegisterSchema,
-    onSubmit: async (values) => {
+    onSubmit: (values) => {
+      console.log(values);
       delete values.confirm_password;
-      await register(values).unwrap();
-      router.push("/dashboard");
+      let is_student = values.role === "student";
+      const payload = { ...values, is_student, is_instructor: !is_student };
+      console.log(payload);
+      register(payload)
+        .unwrap()
+        .then(() => {
+          router.push("/auth/login");
+        })
+        .catch((err) => console.log(err));
     },
   });
 
@@ -98,9 +106,8 @@ export default function RegisterForm() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    let is_student = values.role === "student";
     delete values.confirm_password;
-    delete values.role;
+    let is_student = values.role === "student";
     const payload = { ...values, is_student, is_instructor: !is_student };
     console.log(payload);
     try {
@@ -174,6 +181,7 @@ export default function RegisterForm() {
               console.log(value.value);
               setFieldValue("classroom", value.value);
             }}
+            {...getFieldProps("classroom")}
             sx={{ width: 300, margin: 0 }}
             renderInput={(params) => <TextField {...params} label="Class" />}
           />

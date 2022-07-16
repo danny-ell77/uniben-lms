@@ -89,7 +89,7 @@ export default function Register() {
 
       <SectionStyle>
         <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
-          Manage school work more effectively with U-LMS
+          Manage school work effectively with U-LMS
         </Typography>
         {/* <img alt="register" src="/static/images/register_mockup.jpg" /> */}
       </SectionStyle>

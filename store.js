@@ -1,6 +1,7 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { apiSlice } from "./src/services";
 import authUserReducer from "./src/authSlice";
+import alertReducer from "./src/alertSlice";
 import {
   FLUSH,
   PAUSE,
@@ -15,14 +16,15 @@ import storage from "redux-persist/lib/storage";
 
 const rootReducer = combineReducers({
   auth: authUserReducer,
+  alert: alertReducer,
   [apiSlice.reducerPath]: apiSlice.reducer,
 });
 
 const persistedReducer = persistReducer(
   {
-    key: "rtk:myartstock",
+    key: "rtk:unbiben-lms777",
     storage,
-    blacklist: ["api"],
+    blacklist: ["api", "alert"],
   },
   rootReducer
 );

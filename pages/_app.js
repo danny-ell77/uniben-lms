@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { theme } from "../theme";
 import { store, persistor } from "../store";
+import AlertContainer from "./AlertContainer";
 
 function MyApp({ Component, pageProps }) {
   const getLayout = Component.getLayout ?? ((page) => page);
@@ -19,6 +20,7 @@ function MyApp({ Component, pageProps }) {
         <PersistGate persistor={persistor}>
           <ThemeProvider theme={theme}>
             <CssBaseline />
+            <AlertContainer />
             {getLayout(<Component {...pageProps} />)}
           </ThemeProvider>
         </PersistGate>

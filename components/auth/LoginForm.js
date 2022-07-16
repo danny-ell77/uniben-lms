@@ -18,12 +18,22 @@ import { Link as NextLink } from "next/link";
 // component
 // import Iconify from "../../../components/Iconify";
 import { useLoginMutation } from "../../src/services/authAPI";
+import { useDispatch } from "react-redux";
+import { notify } from "../../src/alertSlice";
 
 export default function LoginForm() {
+  const dispatch = useDispatch();
   const router = useRouter();
   const [login, { isLoading, isSuccess }] = useLoginMutation();
   const [showPassword, setShowPassword] = useState(false);
-
+  const showAlert = (rest) => {
+    dispatch(
+      notify({
+        display: true,
+        ...rest,
+      })
+    );
+  };
   const LoginSchema = Yup.object().shape({
     email: Yup.string()
       .email("Email must be a valid email address")
@@ -47,11 +57,31 @@ export default function LoginForm() {
       // }
       login(values)
         .unwrap()
-        .then((data) => console.log(data))
-        .then(() => {
+        .then((data) => {
+          dispatch(
+            notify({
+              display: true,
+              type: "success",
+              message: data.message,
+            })
+          );
+
           router.push("/dashboard");
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          console.log(error);
+          const { data = {} } = error;
+          if ("non_field_errors" in data) {
+            console.log("caught");
+            dispatch(
+              notify({
+                display: true,
+                type: "error",
+                message: data.non_field_errors?.join(" "),
+              })
+            );
+          }
+        });
       // navigate("/dashboard", { replace: true });
     },
   });

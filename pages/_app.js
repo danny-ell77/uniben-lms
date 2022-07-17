@@ -6,7 +6,7 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { theme } from "../theme";
 import { store, persistor } from "../store";
-import AlertContainer from "./AlertContainer";
+import AlertContainer from "../components/shared/AlertContainer";
 
 function MyApp({ Component, pageProps }) {
   const getLayout = Component.getLayout ?? ((page) => page);

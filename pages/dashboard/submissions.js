@@ -9,6 +9,7 @@ import Button from "@mui/material/Button";
 import Collapse from "@mui/material/Collapse";
 import Container from "@mui/material/Container";
 import Divider from "@mui/material/Divider";
+import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import Modal from "@mui/material/Modal";
@@ -22,6 +23,7 @@ import TableRow from "@mui/material/TableRow";
 import TextField from "@mui/material/TextField";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
+import EditOffIcon from "@mui/icons-material/EditOff";
 import dynamic from "next/dynamic";
 import * as React from "react";
 import { useState } from "react";
@@ -33,8 +35,13 @@ import submissions from "../../__mocks__/submissionsData";
 const MUIRichTextEditor = dynamic(() => import("mui-rte"), { ssr: false });
 
 const Row = (props) => {
-  const { row } = props;
   const [open, setOpen] = React.useState(false);
+  const [edit, setEdit] = useState(false);
+  const toggleEdit = () => {
+    setOpen(true);
+    setEdit(!edit);
+  };
+  const { row } = props;
   return (
     <>
       <TableRow
@@ -71,8 +78,8 @@ const Row = (props) => {
           sx={{ opacity: 0, transition: "ease-in-out", margin: 0, padding: 0 }}
         >
           <Tooltip title="Edit Submission">
-            <IconButton sx={{ ml: 1 }}>
-              <EditIcon />
+            <IconButton sx={{ ml: 1 }} onClick={toggleEdit}>
+              {edit ? <EditOffIcon /> : <EditIcon />}
             </IconButton>
           </Tooltip>
         </TableCell>
@@ -93,13 +100,36 @@ const Row = (props) => {
                 <Typography variant="h6" gutterBottom component="div">
                   Answer:
                 </Typography>
+
                 <MUIRichTextEditor
-                  readOnly={true}
+                  readOnly={!edit}
                   value={JSON.stringify(submissions)}
-                  toolbar={false}
+                  toolbar={edit}
                   label="Type something here..."
-                  inlineToolbar={false}
+                  inlineToolbar={edit}
                 />
+                <Typography variant="h6" gutterBottom component="div">
+                  Instructor:
+                </Typography>
+                <Stack direction="row" spacing={2}>
+                  <TextField
+                    label="Remark"
+                    name="remark"
+                    onChange={() => {}}
+                    required
+                    value={""}
+                    variant="outlined"
+                  />{" "}
+                  <TextField
+                    label="Score"
+                    type="number"
+                    name="score"
+                    onChange={() => {}}
+                    required
+                    value={""}
+                    variant="outlined"
+                  />
+                </Stack>
               </Box>
             </Box>
           </Collapse>

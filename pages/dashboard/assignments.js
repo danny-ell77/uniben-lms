@@ -27,10 +27,15 @@ const MUIRichTextEditor = dynamic(() => import("mui-rte"), { ssr: false });
 
 const Assignments = () => {
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState({
+    assignment: false,
+    submission: false,
+  });
+
   const save = (data) => {
     console.log(data);
   };
-
+  const handleModal = (mode) => setModalMode((prev) => ({ ...prev, ...mode }));
   const handleClose = () => setModalOpen(false);
   return (
     <Box
@@ -41,7 +46,10 @@ const Assignments = () => {
       }}
     >
       <Container>
-        <ToolBar page="assignment" />
+        <ToolBar
+          page="assignment"
+          actionHandler={() => handleModal({ assignment: true })}
+        />
         <TableContainer component={Paper}>
           <Table aria-label="collapsible table">
             <TableHead>
@@ -57,14 +65,21 @@ const Assignments = () => {
             </TableHead>
             <TableBody>
               {assignments.map((row) => (
-                <Row key={row.code} row={row} setModalOpen={setModalOpen} />
+                <Row
+                  key={row.code}
+                  row={row}
+                  setModalOpen={() => handleModal({ submission: true })}
+                />
               ))}
             </TableBody>
           </Table>
         </TableContainer>
       </Container>
       <Box>
-        <Modal open={modalOpen} onClose={handleClose}>
+        <Modal
+          open={modalMode.submission}
+          onClose={() => handleModal({ submission: false })}
+        >
           <Box
             sx={{
               position: "absolute",
@@ -87,7 +102,7 @@ const Assignments = () => {
               <Typography id="modal-modal-title" variant="h6" component="h2">
                 Create Submission
               </Typography>
-              <IconButton onClick={handleClose}>
+              <IconButton onClick={() => handleModal({ submission: false })}>
                 <CloseIcon />
               </IconButton>
             </Stack>
@@ -131,6 +146,38 @@ const Assignments = () => {
                 </Button>
               </Box>
             </form>
+          </Box>
+        </Modal>
+        <Modal
+          open={modalMode.assignment}
+          onClose={() => handleModal({ assignment: false })}
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: 700,
+              bgcolor: "#FFFFFF",
+              boxShadow: 24,
+              borderRadius: 1,
+              p: 4,
+            }}
+          >
+            <Stack
+              direction="row"
+              spacing={2}
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                Create Assignment
+              </Typography>
+              <IconButton onClick={() => handleModal({ assignment: false })}>
+                <CloseIcon />
+              </IconButton>
+            </Stack>
           </Box>
         </Modal>
       </Box>

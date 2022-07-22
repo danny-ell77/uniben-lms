@@ -13,7 +13,7 @@ function capitalize(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-export const ToolBar = ({ page, ...other }) => (
+export const ToolBar = ({ page, actionHandler, ...other }) => (
   <Box {...other}>
     <Box
       sx={{
@@ -28,7 +28,7 @@ export const ToolBar = ({ page, ...other }) => (
         {capitalize(page)}
       </Typography>
       <Box sx={{ m: 1 }}>
-        <Button color="primary" variant="contained">
+        <Button color="primary" variant="contained" onClick={actionHandler}>
           Add {page}
         </Button>
       </Box>

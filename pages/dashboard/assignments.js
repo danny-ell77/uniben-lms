@@ -22,8 +22,27 @@ import { Row } from "../../components/shared/TableRow";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import dynamic from "next/dynamic";
+import { styled } from "@mui/material/styles";
 
 const MUIRichTextEditor = dynamic(() => import("mui-rte"), { ssr: false });
+
+const MuiBox = styled(Box)(({ theme }) => ({
+  position: "absolute",
+  p: 4,
+  // [theme.breakpoints.down("sm")]: {
+  //   width: window.innerWidth,
+  //   height: window.innerHeight,
+  // },
+  [theme.breakpoints.up("md")]: {
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 700,
+    bgcolor: "#FFFFFF",
+    boxShadow: 24,
+    borderRadius: 1,
+  },
+}));
 
 const Assignments = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -80,7 +99,7 @@ const Assignments = () => {
           open={modalMode.submission}
           onClose={() => handleModal({ submission: false })}
         >
-          <Box
+          <MuiBox
             sx={{
               position: "absolute",
               top: "50%",
@@ -146,13 +165,13 @@ const Assignments = () => {
                 </Button>
               </Box>
             </form>
-          </Box>
+          </MuiBox>
         </Modal>
         <Modal
           open={modalMode.assignment}
           onClose={() => handleModal({ assignment: false })}
         >
-          <Box
+          <MuiBox
             sx={{
               position: "absolute",
               top: "50%",
@@ -178,7 +197,7 @@ const Assignments = () => {
                 <CloseIcon />
               </IconButton>
             </Stack>
-          </Box>
+          </MuiBox>
         </Modal>
       </Box>
     </Box>

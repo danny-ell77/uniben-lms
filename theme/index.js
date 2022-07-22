@@ -9,8 +9,8 @@ export const theme = createTheme({
       },
       editor: {
         padding: "20px",
+        // backgroundColor: "#EDE9E8",
         height: "200px",
-        maxHeight: "200px",
         overflow: "auto",
       },
     },

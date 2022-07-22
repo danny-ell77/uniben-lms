@@ -9,6 +9,7 @@ import TableCell from "@mui/material/TableCell";
 import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
@@ -77,12 +78,11 @@ const Assignments = () => {
               p: 4,
             }}
           >
-            <Box
-              sx={{
-                top: 0,
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}
+            <Stack
+              direction="row"
+              spacing={2}
+              justifyContent="space-between"
+              alignItems="center"
             >
               <Typography id="modal-modal-title" variant="h6" component="h2">
                 Create Submission
@@ -90,7 +90,7 @@ const Assignments = () => {
               <IconButton onClick={handleClose}>
                 <CloseIcon />
               </IconButton>
-            </Box>
+            </Stack>
             <Divider sx={{ margin: "15px 0" }} />
             <form autoComplete="off" noValidate>
               <Grid container spacing={3}>
@@ -113,6 +113,7 @@ const Assignments = () => {
                       inlineToolbar={true}
                     />
                   </Box>
+                  <Divider sx={{ margin: "15px 0" }} />
                 </Grid>
               </Grid>
               <Box

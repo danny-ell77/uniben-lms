@@ -111,24 +111,30 @@ const Row = (props) => {
                 <Typography variant="h6" gutterBottom component="div">
                   Instructor:
                 </Typography>
-                <Stack direction="row" spacing={2}>
-                  <TextField
-                    label="Remark"
-                    name="remark"
-                    onChange={() => {}}
-                    required
-                    value={""}
-                    variant="outlined"
-                  />{" "}
-                  <TextField
-                    label="Score"
-                    type="number"
-                    name="score"
-                    onChange={() => {}}
-                    required
-                    value={""}
-                    variant="outlined"
-                  />
+                <Stack direction="row" justifyContent="space-between">
+                  <Box>
+                    <TextField
+                      label="Remark"
+                      name="remark"
+                      onChange={() => {}}
+                      required
+                      value={""}
+                      variant="outlined"
+                    />{" "}
+                    <TextField
+                      label="Score"
+                      type="number"
+                      name="score"
+                      onChange={() => {}}
+                      required
+                      value={""}
+                      variant="outlined"
+                    />
+                  </Box>
+
+                  <Button color="primary" variant="contained" sx={{ mx: 2 }}>
+                    Mark
+                  </Button>
                 </Stack>
               </Box>
             </Box>

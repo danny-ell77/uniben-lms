@@ -53,16 +53,16 @@ const items = [
     icon: <ForumIcon fontSize="small" />,
     title: "Chat",
   },
-  {
-    href: "/dashboard/activity",
-    icon: <FeedIcon fontSize="small" />,
-    title: "Activity",
-  },
-  {
-    href: "/dashboard/settings",
-    icon: <SettingsIcon fontSize="small" />,
-    title: "Settings",
-  },
+  // {
+  //   href: "/dashboard/activity",
+  //   icon: <FeedIcon fontSize="small" />,
+  //   title: "Activity",
+  // },
+  // {
+  //   href: "/dashboard/settings",
+  //   icon: <SettingsIcon fontSize="small" />,
+  //   title: "Settings",
+  // },
   {
     href: "/dashboard/profile",
     icon: <AccountCircleIcon fontSize="small" />,

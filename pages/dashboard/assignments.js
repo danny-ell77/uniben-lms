@@ -29,10 +29,10 @@ const MUIRichTextEditor = dynamic(() => import("mui-rte"), { ssr: false });
 const MuiBox = styled(Box)(({ theme }) => ({
   position: "absolute",
   p: 4,
-  // [theme.breakpoints.down("sm")]: {
-  //   width: window.innerWidth,
-  //   height: window.innerHeight,
-  // },
+  [theme.breakpoints.down("sm")]: {
+    width: window.innerWidth,
+    height: window.innerHeight,
+  },
   [theme.breakpoints.up("md")]: {
     top: "50%",
     left: "50%",

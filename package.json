@@ -16,6 +16,7 @@
     "@mui/material": "^5.8.7",
     "@mui/styles": "^5.8.7",
     "@reduxjs/toolkit": "^1.8.3",
+    "date-fns": "^2.29.1",
     "formik": "^2.2.9",
     "mui-rte": "^2.0.1",
     "next": "12.2.0",

@@ -6,11 +6,15 @@ import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import Modal from "@mui/material/Modal";
 import { styled } from "@mui/material/styles";
-
+import { LoadingButton } from "@mui/lab";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import { convertToRaw } from "draft-js";
 import dynamic from "next/dynamic";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { useCreateSubmissionMutation } from "../../lib/services/otherAPI";
 
 const MUIRichTextEditor = dynamic(() => import("mui-rte"), { ssr: false });
 
@@ -32,9 +36,38 @@ const ModalInnerBox = styled(Box)(({ theme }) => ({
   },
 }));
 
-const SubmissionForm = ({ open, handleModal }) => {
+const SubmissionForm = ({ open, handleModal, data: otherInfo }) => {
+  const [createSubmission, { isLoading }] = useCreateSubmissionMutation();
+  const { user } = useSelector((state) => state.auth);
+  const [submission, setSubmission] = useState({
+    title: "",
+    content: "",
+  });
   const save = (data) => {
-    console.log(data);
+    console.log(submission, otherInfo);
+  };
+  const submit = async () => {
+    if (!user.student) return;
+    const { title, content } = submission;
+    const { assignmentId: assignment, instructor } = otherInfo;
+    let classroom = user.student.classroom.name;
+    await createSubmission({
+      assignment,
+      title,
+      content,
+      instructor,
+      classroom,
+    }).unwrap();
+    handleModal({ submission: false });
+  };
+  const handleEditorStateChange = (event) => {
+    const content = JSON.stringify(convertToRaw(event.getCurrentContent()));
+    setSubmission((prev) => ({ ...prev, content }));
+  };
+
+  const handleTitleChange = (event) => {
+    const { name, value } = event.target;
+    setSubmission((prev) => ({ ...prev, [name]: value }));
   };
   return (
     <Modal open={open} onClose={() => handleModal({ submission: false })}>
@@ -74,6 +107,7 @@ const SubmissionForm = ({ open, handleModal }) => {
                 label="Title"
                 name="title"
                 required
+                onChange={handleTitleChange}
                 variant="outlined"
               />
             </Grid>
@@ -83,6 +117,7 @@ const SubmissionForm = ({ open, handleModal }) => {
                   readOnly={false}
                   onSave={save}
                   toolbar={true}
+                  onChange={handleEditorStateChange}
                   label="Type something here..."
                   inlineToolbar={true}
                 />
@@ -97,12 +132,17 @@ const SubmissionForm = ({ open, handleModal }) => {
               flexDirection: "row",
             }}
           >
-            <Button color="primary" variant="contained" sx={{ mx: 2 }}>
+            <LoadingButton color="primary" variant="contained" sx={{ mx: 2 }}>
               Save Draft
-            </Button>
-            <Button color="primary" variant="contained">
+            </LoadingButton>
+            <LoadingButton
+              color="primary"
+              variant="contained"
+              onClick={submit}
+              loading={isLoading}
+            >
               Submit
-            </Button>
+            </LoadingButton>
           </Box>
         </form>
       </ModalInnerBox>

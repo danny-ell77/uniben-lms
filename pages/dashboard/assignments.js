@@ -24,6 +24,11 @@ const Assignments = () => {
     submission: false,
   });
 
+  const [submissionData, setSubmissionData] = useState({
+    instructor: "",
+    assignmentId: "",
+  });
+
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
 
@@ -68,6 +73,7 @@ const Assignments = () => {
                 <Row
                   key={row.code}
                   row={row}
+                  setSubmissionData={setSubmissionData}
                   setModalOpen={() => handleModal({ submission: true })}
                 />
               ))}
@@ -85,7 +91,11 @@ const Assignments = () => {
         </TableContainer>
       </Container>
       <Box>
-        <SubmissionForm open={modalMode.submission} handleModal={handleModal} />
+        <SubmissionForm
+          data={submissionData}
+          open={modalMode.submission}
+          handleModal={handleModal}
+        />
 
         <AssignmentForm open={modalMode.assignment} handleModal={handleModal} />
       </Box>

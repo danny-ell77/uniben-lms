@@ -31,6 +31,8 @@ import { DashboardLayout } from "../../components/Layout";
 import { ToolBar } from "../../components/shared/ToolBar";
 import assignments from "../../__mocks__/assignmentData";
 import submissions from "../../__mocks__/submissionsData";
+import { useGetSubmissionsQuery } from "../../lib/services/otherAPI";
+import { useSelector } from "react-redux";
 
 const MUIRichTextEditor = dynamic(() => import("mui-rte"), { ssr: false });
 
@@ -67,8 +69,8 @@ const Row = (props) => {
         <TableCell component="th" scope="row">
           {row.code}
         </TableCell>
-        <TableCell>{row.instructor}</TableCell>
         <TableCell>{row.course}</TableCell>
+        <TableCell>{row.instructor}</TableCell>
         <TableCell>{row.status}</TableCell>
         <TableCell>{row.due}</TableCell>
         <TableCell>{row.marks}</TableCell>
@@ -146,8 +148,11 @@ const Row = (props) => {
 };
 
 const Submissions = () => {
+  const { data } = useGetSubmissionsQuery();
   const [modalOpen, setModalOpen] = useState(false);
-
+  const {
+    user: { student = null },
+  } = useSelector((state) => state.auth);
   const handleClose = () => setModalOpen(false);
   return (
     <Box
@@ -166,7 +171,7 @@ const Submissions = () => {
                 <TableCell />
                 <TableCell>Assignment Code</TableCell>
                 <TableCell>Course</TableCell>
-                <TableCell>Student</TableCell>
+                <TableCell>{student ? "Instructor" : "Student"}</TableCell>
                 <TableCell>Title</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Score</TableCell>

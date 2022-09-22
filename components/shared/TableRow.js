@@ -13,18 +13,22 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { parseISO, formatDistance } from "date-fns";
+
 export const Row = (props) => {
-  const { row } = props;
+  const { row, setSubmissionData } = props;
   const [open, setOpen] = React.useState(false);
 
-  const chipColor =
-    row.status === "pending"
-      ? "warning"
-      : row.status === "COMPLETED"
-      ? "success"
-      : row.status === "CANCELLED"
-      ? "error"
-      : "info";
+  let chipColor;
+  switch (row?.status) {
+    case "PENDING":
+      chipColor = "warning";
+    case "COMPLETED":
+      chipColor = "success";
+    case "CANCELLED":
+      chipColor = "error";
+    default:
+      chipColor = "info";
+  }
 
   const date = parseISO(row.due);
   const dueIn = formatDistance(date, Date.now(), { addSuffix: true }) ?? "";
@@ -79,7 +83,13 @@ export const Row = (props) => {
                 <Tooltip title="Create Submission">
                   <IconButton
                     sx={{ ml: 1 }}
-                    onClick={() => props.setModalOpen(true)}
+                    onClick={() => {
+                      props.setModalOpen(true);
+                      setSubmissionData({
+                        instructor: row.instructor,
+                        assignmentId: row.id,
+                      });
+                    }}
                   >
                     <AddIcon />
                   </IconButton>

@@ -74,7 +74,7 @@ export const DashboardNavbar = (props) => {
             </IconButton>
           </Tooltip>
           <Box sx={{ flexGrow: 1 }} />
-          <Tooltip title="Contacts">
+          <Tooltip title="Classmates">
             <IconButton sx={{ ml: 1 }}>
               <AiOutlineUser />
               {/* <UsersIcon fontSize="small" /> */}

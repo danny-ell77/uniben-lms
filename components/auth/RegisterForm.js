@@ -23,13 +23,7 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 // component
 // import Iconify from "../../../components/Iconify";
 
-const classOptions = [
-  { value: "CPE 500L", label: "CPE 500L" },
-  { value: "CPE 400L", label: "CPE 400L" },
-  { value: "CPE 300L", label: "CPE 300L" },
-  { value: "CPE 200L", label: "CPE 200L" },
-  { value: "CPE 100L", label: "CPE 100L" },
-];
+const classOptions = [ "CPE 500L", "CPE 400L", "CPE 300L", "CPE 200L", "CPE 100L"];
 
 export default function RegisterForm() {
   const [register, { isLoading, isSuccess }] = useRegisterMutation();
@@ -106,15 +100,16 @@ export default function RegisterForm() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    delete values.confirm_password;
-    let is_student = values.role === "student";
-    const payload = { ...values, is_student, is_instructor: !is_student };
-    console.log(payload);
-    try {
-      await register(payload);
-    } catch (err) {
-      console.log(err);
-    }
+    console.log(values)
+    // delete values.confirm_password;
+    // let is_student = values.role === "student";
+    // const payload = { ...values, is_student, is_instructor: !is_student };
+    // console.log(payload);
+    // try {
+    //   await register(payload);
+    // } catch (err) {
+    //   console.log(err);
+    // }
   };
 
   return (
@@ -171,17 +166,21 @@ export default function RegisterForm() {
           </FormControl>
 
           <Autocomplete
-            // disablePortal
-            id="classroom-demo"
+            disablePortal
             options={classOptions}
-            isOptionEqualToValue={(option, value) =>
-              option.value === value?.value
-            }
-            onChange={(e, value) => {
-              console.log(value.value);
-              setFieldValue("classroom", value.value);
+            // isOptionEqualToValue={(option, value) =>
+            // {
+            //   option.value === value?.value
+            // }
+            // }
+            // onChange={(e, value) => {
+            //   console.log(value.value);
+            //   setFieldValue("classroom", value.value);
+            // }}
+            onInputChange={(event, newInputValue) => {
+              console.log(newInputValue)
+              setFieldValue("classroom", newInputValue);
             }}
-            {...getFieldProps("classroom")}
             sx={{ width: 300, margin: 0 }}
             renderInput={(params) => <TextField {...params} label="Class" />}
           />

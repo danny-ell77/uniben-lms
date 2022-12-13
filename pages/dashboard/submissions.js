@@ -1,19 +1,18 @@
-import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
+import EditOffIcon from "@mui/icons-material/EditOff";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Collapse from "@mui/material/Collapse";
 import Container from "@mui/material/Container";
 import Divider from "@mui/material/Divider";
-import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import Modal from "@mui/material/Modal";
 import Paper from "@mui/material/Paper";
+import Stack from "@mui/material/Stack";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -23,27 +22,52 @@ import TableRow from "@mui/material/TableRow";
 import TextField from "@mui/material/TextField";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import EditOffIcon from "@mui/icons-material/EditOff";
+import { formatDistance, parseISO } from "date-fns";
 import dynamic from "next/dynamic";
 import * as React from "react";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import { DashboardLayout } from "../../components/Layout";
 import { ToolBar } from "../../components/shared/ToolBar";
-import assignments from "../../__mocks__/assignmentData";
-import submissions from "../../__mocks__/submissionsData";
-import { useGetSubmissionsQuery } from "../../lib/services/otherAPI";
-import { useSelector } from "react-redux";
+import { useEditSubmissionMutation, useGetSubmissionsQuery, useGetSingleAssignmentQuery } from "../../lib/services/otherAPI";
+import { LoadingButton } from "@mui/lab";
+
 
 const MUIRichTextEditor = dynamic(() => import("mui-rte"), { ssr: false });
 
 const Row = (props) => {
+  const { row } = props;
+
+  const [editSubmission, { isLoading }] = useEditSubmissionMutation()
+  const {data: {data: assignment = {}} = {}} = useGetSingleAssignmentQuery(row.assignment)
   const [open, setOpen] = React.useState(false);
+  const [score, setScore] = useState({
+    remark: "",
+    score: 0
+  })
   const [edit, setEdit] = useState(false);
   const toggleEdit = () => {
     setOpen(true);
     setEdit(!edit);
   };
-  const { row } = props;
+  const dueIn = "--"
+  if (assignment?.due) {
+    const date = parseISO(assignment?.due);
+     dueIn = formatDistance(date, Date.now(), { addSuffix: true }) ?? "";
+    
+  }
+
+  const handleScoreChange = e => {
+    const { name, value } = e.target
+    console.log(name, value)
+      setScore(prev => ({...prev, [name]: value}))
+  }
+
+  const submitScore = async () => {
+    console.log(score)
+    await editSubmission({id:row.id, body:score}).unwrap()
+  }
+
   return (
     <>
       <TableRow
@@ -66,15 +90,16 @@ const Row = (props) => {
             {open ? <KeyboardArrowDownIcon /> : <KeyboardArrowRightIcon />}
           </IconButton>
         </TableCell>
-        <TableCell component="th" scope="row">
-          {row.code}
-        </TableCell>
-        <TableCell>{row.course}</TableCell>
-        <TableCell>{row.instructor}</TableCell>
+        {/* <TableCell component="th" scope="row">
+          {row.assignment.code}
+        </TableCell> */}
+        <TableCell>{assignment.course}</TableCell>
+        <TableCell>{row.instructor_name}</TableCell>
         <TableCell>{row.status}</TableCell>
-        <TableCell>{row.due}</TableCell>
-        <TableCell>{row.marks}</TableCell>
-        <TableCell>{row.marks}</TableCell>
+        <TableCell>{dueIn}</TableCell>
+        <TableCell>{row.score}</TableCell>
+        <TableCell>{assignment.marks}</TableCell>
+        <TableCell>{row.remark}</TableCell>
         <TableCell
           className="editTip"
           sx={{ opacity: 0, transition: "ease-in-out", margin: 0, padding: 0 }}
@@ -105,11 +130,16 @@ const Row = (props) => {
 
                 <MUIRichTextEditor
                   readOnly={!edit}
-                  value={JSON.stringify(submissions)}
+                  value={row.content}
                   toolbar={edit}
                   label="Type something here..."
                   inlineToolbar={edit}
                 />
+
+                <Typography variant="h6" gutterBottom component="div">
+                  Attachments:
+                </Typography>
+                <a target="_blank" href={row?.file}>{row?.file?.split("?")[0] ?? "--"}</a>
                 <Typography variant="h6" gutterBottom component="div">
                   Instructor:
                 </Typography>
@@ -118,25 +148,24 @@ const Row = (props) => {
                     <TextField
                       label="Remark"
                       name="remark"
-                      onChange={() => {}}
+                      onChange={handleScoreChange}
                       required
-                      value={""}
+                      value={score.remark}
                       variant="outlined"
                     />{" "}
                     <TextField
                       label="Score"
                       type="number"
                       name="score"
-                      onChange={() => {}}
+                      onChange={handleScoreChange}
                       required
-                      value={""}
+                      value={score.score}
                       variant="outlined"
                     />
                   </Box>
-
-                  <Button color="primary" variant="contained" sx={{ mx: 2 }}>
+                  <LoadingButton color="primary" variant="contained" sx={{ mx: 2 }} onClick={submitScore} loading={isLoading}>
                     Mark
-                  </Button>
+                  </LoadingButton>
                 </Stack>
               </Box>
             </Box>
@@ -148,7 +177,8 @@ const Row = (props) => {
 };
 
 const Submissions = () => {
-  const { data } = useGetSubmissionsQuery();
+  const { data: {data = []} = {} } = useGetSubmissionsQuery();
+  console.log(data)
   const [modalOpen, setModalOpen] = useState(false);
   const {
     user: { student = null },
@@ -169,19 +199,20 @@ const Submissions = () => {
             <TableHead>
               <TableRow>
                 <TableCell />
-                <TableCell>Assignment Code</TableCell>
+                {/* <TableCell>Assignment Code</TableCell> */}
                 <TableCell>Course</TableCell>
                 <TableCell>{student ? "Instructor" : "Student"}</TableCell>
-                <TableCell>Title</TableCell>
                 <TableCell>Status</TableCell>
+                <TableCell>Due</TableCell>
                 <TableCell>Score</TableCell>
                 <TableCell>Mark</TableCell>
+                <TableCell>Remarks</TableCell>
                 <TableCell></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {assignments.map((row) => (
-                <Row key={row.code} row={row} setModalOpen={setModalOpen} />
+              {data.map((row) => (
+                <Row key={row.id} row={row} setModalOpen={setModalOpen} />
               ))}
             </TableBody>
           </Table>

@@ -53,6 +53,11 @@ const items = [
     icon: <ForumIcon fontSize="small" />,
     title: "Chat",
   },
+  {
+    href: "/dashboard/materials",
+    icon: <FeedIcon fontSize="small" />,
+    title: "Course Materials",
+  },
   // {
   //   href: "/dashboard/activity",
   //   icon: <FeedIcon fontSize="small" />,

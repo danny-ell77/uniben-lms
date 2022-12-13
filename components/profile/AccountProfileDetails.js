@@ -10,6 +10,8 @@ import {
   TextField,
 } from "@mui/material";
 import { useSelector } from "react-redux";
+import { useEditProfileMutation } from "../../lib/services/otherAPI";
+import { LoadingButton } from "@mui/lab";
 
 const states = [
   {
@@ -28,13 +30,12 @@ const states = [
 
 export const AccountProfileDetails = (props) => {
   const { user } = useSelector((state) => state.auth);
+  const [editProfile, {isLoading}] = useEditProfileMutation()
   const [values, setValues] = useState({
-    firstName: user.fullname.split(" ")[0] || "",
-    lastName: user.fullname.split(" ")[1] || "",
-    email: user.email || "",
+    firstName: user?.fullname.split(" ")[0] || "",
+    lastName: user?.fullname.split(" ")[1] || "",
+    email: user?.email || "",
     phone: "",
-    class: "Alabama",
-    country: "USA",
   });
 
   const handleChange = (event) => {
@@ -43,6 +44,17 @@ export const AccountProfileDetails = (props) => {
       [event.target.name]: event.target.value,
     });
   };
+
+  const _editProfile = async () => {
+    const payload = {
+      first_name: values.firstName,
+      last_name: values.lastName,
+      email: values.email,
+      phone: values.phone
+
+    }
+      await editProfile({body: payload}).unwrap()
+  }
 
   return (
     <form autoComplete="off" noValidate {...props}>
@@ -136,9 +148,9 @@ export const AccountProfileDetails = (props) => {
             p: 2,
           }}
         >
-          <Button color="primary" variant="contained">
+          <LoadingButton color="primary" variant="contained" loading={isLoading} onClick={_editProfile}>
             Save details
-          </Button>
+          </LoadingButton>
         </Box>
       </Card>
     </form>

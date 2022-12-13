@@ -14,7 +14,8 @@ import { convertToRaw } from "draft-js";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { useCreateSubmissionMutation } from "../../lib/services/otherAPI";
+import { useAttachmentUploadFinishMutation, useCreateSubmissionMutation, useDirectUploadFinishMutation, useDirectUploadStartMutation } from "../../lib/services/otherAPI";
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 
 const MUIRichTextEditor = dynamic(() => import("mui-rte"), { ssr: false });
 
@@ -37,8 +38,13 @@ const ModalInnerBox = styled(Box)(({ theme }) => ({
 }));
 
 const SubmissionForm = ({ open, handleModal, data: otherInfo }) => {
+  const [attachment, setAttachment] = useState(null)
+  const [directUploadStart, {isLoading: startLoading}] = useDirectUploadStartMutation()
+  const [directUploadFinish, {isLoading: finishLoading}] = useDirectUploadFinishMutation()
   const [createSubmission, { isLoading }] = useCreateSubmissionMutation();
+  const [attachmentUploadFinish] = useAttachmentUploadFinishMutation()
   const { user } = useSelector((state) => state.auth);
+  const [uploading, setUploading] = useState(false)
   const [submission, setSubmission] = useState({
     title: "",
     content: "",
@@ -47,17 +53,26 @@ const SubmissionForm = ({ open, handleModal, data: otherInfo }) => {
     console.log(submission, otherInfo);
   };
   const submit = async () => {
-    if (!user.student) return;
+    if (!user?.student) return;
     const { title, content } = submission;
     const { assignmentId: assignment, instructor } = otherInfo;
-    let classroom = user.student.classroom.name;
-    await createSubmission({
+    let classroom = user?.student.classroom.name;
+    const attachment_details = {
+      file_name: attachment?.name,
+      file_type: attachment?.type
+    }
+    const payload = {
       assignment,
       title,
       content,
       instructor,
       classroom,
-    }).unwrap();
+      has_attachment: Boolean(attachment),
+      ...(Boolean(attachment) ? attachment_details : {})
+    }
+    const fulfilled = await createSubmission(payload).unwrap();
+    await directUploadDo(fulfilled.attachment)
+    await attachmentUploadFinish({file_id: fulfilled?.data?.id}).unwrap()
     handleModal({ submission: false });
   };
   const handleEditorStateChange = (event) => {
@@ -69,6 +84,33 @@ const SubmissionForm = ({ open, handleModal, data: otherInfo }) => {
     const { name, value } = event.target;
     setSubmission((prev) => ({ ...prev, [name]: value }));
   };
+
+    
+    // const _directUploadStart = async ({ file_name, file_type }) => {
+    //     const payload = { file_name, file_type, classroom: user?.student?.classroom.name}
+    //     console.log(payload)
+    //     const fulfilled = await directUploadStart(payload).unwrap()
+    //     return fulfilled
+    // }
+    const directUploadDo = async (data) => {
+        const postData = new FormData();
+
+        for (const key in data?.fields) {
+            postData.append(key, data.fields[key]);
+        }
+        postData.append('file', attachment);
+        
+        setUploading(true)
+        const fulfilled = await fetch(data?.url, { method: 'POST', body: postData })
+        setUploading(false)
+
+    }
+
+    const handleFileChange = e => {
+        const file = e.target.files[0]
+        setAttachment(file)
+  }
+  
   return (
     <Modal open={open} onClose={() => handleModal({ submission: false })}>
       <ModalInnerBox
@@ -128,10 +170,23 @@ const SubmissionForm = ({ open, handleModal, data: otherInfo }) => {
           <Box
             sx={{
               display: "flex",
-              justifyContent: "flex-end",
+              justifyContent: "space-between",
               flexDirection: "row",
             }}
           >
+            <Box>
+            <Button
+              color="primary"
+              variant="outlined"
+              startIcon={<AttachFileIcon />}
+                component="label"
+            >
+                Attach File
+                <input type="file" hidden onChange={handleFileChange}/>
+              </Button>
+              <p style={{display: "inline-block"}} overflow="hidden">{attachment?.name}</p><p style={{paddingLeft: 2, color: "red", display: "inline-block", cursor: "pointer"}} onClick={() => setAttachment(null)}>X</p>
+            </Box>
+            <Box>
             <LoadingButton color="primary" variant="contained" sx={{ mx: 2 }}>
               Save Draft
             </LoadingButton>
@@ -139,10 +194,12 @@ const SubmissionForm = ({ open, handleModal, data: otherInfo }) => {
               color="primary"
               variant="contained"
               onClick={submit}
-              loading={isLoading}
+              loading={isLoading || uploading}
             >
               Submit
-            </LoadingButton>
+              </LoadingButton>
+            </Box>
+              
           </Box>
         </form>
       </ModalInnerBox>

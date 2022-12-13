@@ -32,7 +32,7 @@ export const AccountProfile = (props) => {
           }}
         >
           <Avatar
-            src={user.avatar}
+            src={user?.avatar}
             sx={{
               height: 64,
               mb: 2,
@@ -40,13 +40,13 @@ export const AccountProfile = (props) => {
             }}
           />
           <Typography color="textPrimary" gutterBottom variant="h5">
-            {accountUser.fullname}
+            {accountUser?.full_name}
           </Typography>
           <Typography color="textSecondary" variant="body2">
-            {`${accountUser.student.classroom.name}`}
+            {`${accountUser?.student.classroom.name}`}
           </Typography>
           <Typography color="textSecondary" variant="body2">
-            {user.timezone}
+            {user?.timezone}
           </Typography>
         </Box>
       </CardContent>

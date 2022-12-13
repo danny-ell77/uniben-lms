@@ -10,7 +10,9 @@ import {
   IconButton,
   Popover,
 } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { logOut } from "../../lib/authSlice";
+import { useRouter } from "next/router";
 
 const ArrowStyle = styled("span")(({ theme }) => ({
   [theme.breakpoints.up("sm")]: {
@@ -48,9 +50,10 @@ const MENU_OPTIONS = [
 ];
 
 const AccountPopover = () => {
+  const router = useRouter();
   const { user } = useSelector((state) => state.auth);
   const anchorRef = useRef(null);
-
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(null);
 
   const handleOpen = (event) => {
@@ -60,6 +63,11 @@ const AccountPopover = () => {
   const handleClose = () => {
     setOpen(null);
   };
+
+  const handleLogout = () => {
+    dispatch(logOut());
+    router.replace("/auth/login");
+  }
 
   return (
     <>
@@ -108,10 +116,10 @@ const AccountPopover = () => {
         <ArrowStyle className="arrow" />
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {user.fullname}
+            {user?.fullname}
           </Typography>
           <Typography variant="body2" sx={{ color: "text.secondary" }} noWrap>
-            {user.email}
+            {user?.email}
           </Typography>
         </Box>
 
@@ -131,7 +139,7 @@ const AccountPopover = () => {
 
         <Divider sx={{ borderStyle: "dashed" }} />
 
-        <MenuItem onClick={handleClose} sx={{ m: 1 }}>
+        <MenuItem onClick={handleLogout} sx={{ m: 1 }}>
           Logout
         </MenuItem>
       </Popover>

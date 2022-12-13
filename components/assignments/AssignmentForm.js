@@ -76,14 +76,8 @@ const AssignmentForm = ({ open, handleModal }) => {
     },
     validationSchema: AssignmentSchema,
     onSubmit: async (values) => {
-      let id = user.instructor.id;
+      // let id = user?.instructor.id;
       // await createAssignment({ values, id }).unwrap();
-      if (!user.is_instructor) {
-        return toast({
-          type: "warn",
-          message: "You are not authorized to do this",
-        });
-      }
       await createAssignment(values).unwrap();
       handleModal({ assignment: false });
       resetForm();
@@ -121,9 +115,9 @@ const AssignmentForm = ({ open, handleModal }) => {
           justifyContent="space-between"
           alignItems="center"
         >
-          <Typography id="modal-modal-question" variant="h6" component="h2">
+          {<Typography id="modal-modal-question" variant="h6" component="h2">
             Create Assignment
-          </Typography>
+          </Typography>}
           <IconButton onClick={() => handleModal({ assignment: false })}>
             <CloseIcon />
           </IconButton>

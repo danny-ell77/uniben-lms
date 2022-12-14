@@ -2,7 +2,7 @@ import { Avatar, Box, Card, CardContent, Grid, Typography } from '@mui/material'
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import MoneyIcon from '@mui/icons-material/Money';
 
-export const CumulativeGrades = (props) => (
+export const CumulativeGrades = ({data, ...props}) => (
   <Card
     sx={{ height: '100%' }}
     {...props}
@@ -25,7 +25,7 @@ export const CumulativeGrades = (props) => (
             color="textPrimary"
             variant="h4"
           >
-            60%
+            { data}%
           </Typography>
         </Grid>
         <Grid item>

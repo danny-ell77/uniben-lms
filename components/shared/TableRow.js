@@ -54,7 +54,9 @@ export const Row = (props) => {
         <TableCell>{row.instructor_name}</TableCell>
         <TableCell>{row.course}</TableCell>
         <TableCell>
-          <Chip label={row.status} color={chipColor} />
+          <Chip label={row.status} color={(row.status === 'COMPLETED' && 'success')
+                    || (row.status === 'PENDING' && 'warning')
+                    || 'error'}/>
         </TableCell>
         <TableCell>{dueIn}</TableCell>
         <TableCell>{row.marks}</TableCell>

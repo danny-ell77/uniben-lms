@@ -1,4 +1,6 @@
-import { formatDistanceToNow, subHours } from 'date-fns';
+import { formatDistanceToNow, subHours, parseISO } from 'date-fns';
+import NextLink from "next/link";
+
 import { v4 as uuid } from 'uuid';
 import {
   Box,
@@ -10,71 +12,74 @@ import {
   List,
   ListItem,
   ListItemAvatar,
+  Link,
   ListItemText
 } from '@mui/material';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-const products = [
+const items = [
   {
     id: uuid(),
     name: 'Dropbox',
-    imageUrl: '/static/images/products/product_1.png',
+    imageUrl: '/static/images/items/item_1.png',
     updatedAt: subHours(Date.now(), 2)
   },
   {
     id: uuid(),
     name: 'Medium Corporation',
-    imageUrl: '/static/images/products/product_2.png',
+    imageUrl: '/static/images/items/item_2.png',
     updatedAt: subHours(Date.now(), 2)
   },
   {
     id: uuid(),
     name: 'Slack',
-    imageUrl: '/static/images/products/product_3.png',
+    imageUrl: '/static/images/items/item_3.png',
     updatedAt: subHours(Date.now(), 3)
   },
   {
     id: uuid(),
     name: 'Lyft',
-    imageUrl: '/static/images/products/product_4.png',
+    imageUrl: '/static/images/items/item_4.png',
     updatedAt: subHours(Date.now(), 5)
   },
   {
     id: uuid(),
     name: 'GitHub',
-    imageUrl: '/static/images/products/product_5.png',
+    imageUrl: '/static/images/items/item_5.png',
     updatedAt: subHours(Date.now(), 9)
   }
 ];
 
-export const LatestMaterials = (props) => (
+export const LatestMaterials = ({data, ...props}) => (
   <Card {...props}>
     <CardHeader
-      subtitle={`${products.length} in total`}
+      subtitle={`${items.length} in total`}
       title="Latest Course Materials"
     />
     <Divider />
     <List>
-      {products.map((product, i) => (
+      {data?.map?.((item, i) => (
         <ListItem
-          divider={i < products.length - 1}
-          key={product.id}
+          divider={i < data.length - 1}
+          key={item.id}
         >
-          <ListItemAvatar>
+          {/* <ListItemAvatar>
           <img
-              alt={product.name}
-              src={product.imageUrl}
+              alt={item.name}
+              src={item.imageUrl}
               style={{
                 height: 48,
                 width: 48
               }}
             />
-          </ListItemAvatar>
+          </ListItemAvatar> */}
+          <Link sx={{width: "100%", cursor: "pointer", textDecoration: "none"}} href={item?.file} target="_blank">
           <ListItemText
-            primary={product.name}
-            secondary={`Updated ${formatDistanceToNow(product.updatedAt)}`}
-          />
+            primary={item.original_file_name}
+            secondary={`Updated ${formatDistanceToNow(parseISO(item.upload_finished_at))} ago by ${item.uploaded_by}`}
+            />
+          </Link>
           <IconButton
             edge="end"
             size="small"
@@ -92,6 +97,7 @@ export const LatestMaterials = (props) => (
         p: 2
       }}
     >
+      <NextLink href="/dashboard/materials">
       <Button
         color="primary"
         endIcon={<ArrowRightIcon />}
@@ -100,6 +106,7 @@ export const LatestMaterials = (props) => (
       >
         View all
       </Button>
+      </NextLink>
     </Box>
   </Card>
 );

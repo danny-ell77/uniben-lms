@@ -7,11 +7,12 @@ import { LatestAssignments } from '../../components/home/latest-assignments';
 import { LatestMaterials } from '../../components/home/latest-materials';
 import { SubmissionsProgress } from '../../components/home/submissions-progress';
 import { TotalAssignments } from '../../components/home/total-assignments';
-import { TotalProfit } from '../../components/home/total-profit';
+import { TotalSubmissions } from '../../components/home/total-submissions';
 import { useGetAccountInformationQuery } from "../../lib/services/otherAPI";
 
 const Index = () => {
-  const {data} = useGetAccountInformationQuery();
+  const { data } = useGetAccountInformationQuery();
+  console.log(data)
   return (<>
     <Head>
       <title>
@@ -37,7 +38,7 @@ const Index = () => {
             xl={3}
             xs={12}
           >
-            <CumulativeGrades />
+            <CumulativeGrades data={data?.cumulative_grades} />
           </Grid>
           <Grid
             item
@@ -46,7 +47,7 @@ const Index = () => {
             sm={6}
             xs={12}
           >
-            <TotalAssignments />
+            <SubmissionsProgress data={ data?.submissions_progress} />
           </Grid>
           <Grid
             item
@@ -55,8 +56,9 @@ const Index = () => {
             sm={6}
             xs={12}
           >
-            <SubmissionsProgress />
+            <TotalAssignments data={data?.total_assignments} />
           </Grid>
+
           <Grid
             item
             xl={3}
@@ -64,7 +66,7 @@ const Index = () => {
             sm={6}
             xs={12}
           >
-            <TotalProfit sx={{ height: '100%' }} />
+            <TotalSubmissions sx={{ height: '100%' }} data={data?.total_submissions} />
           </Grid>
           <Grid
             item
@@ -73,7 +75,7 @@ const Index = () => {
             xl={3}
             xs={12}
           >
-            <LatestMaterials sx={{ height: '100%' }} />
+            <LatestMaterials sx={{ height: '100%' }} data={data?.latest_course_materials} />
           </Grid>
           <Grid
             item
@@ -82,7 +84,7 @@ const Index = () => {
             xl={9}
             xs={12}
           >
-            <LatestAssignments />
+            <LatestAssignments data={data?.latest_assignments} />
           </Grid>
         </Grid>
       </Container>

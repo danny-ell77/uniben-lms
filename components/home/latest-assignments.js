@@ -1,4 +1,5 @@
-import { format } from 'date-fns';
+import NextLink from "next/link";
+import { format, parseISO } from 'date-fns';
 import { v4 as uuid } from 'uuid';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import {
@@ -17,70 +18,8 @@ import {
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { SeverityPill } from '../shared/severity-pill';
 
-const orders = [
-  {
-    id: uuid(),
-    ref: 'CDD1049',
-    amount: 30.5,
-    customer: {
-      name: 'Ekaterina Tankova'
-    },
-    createdAt: 1555016400000,
-    status: 'pending'
-  },
-  {
-    id: uuid(),
-    ref: 'CDD1048',
-    amount: 25.1,
-    customer: {
-      name: 'Cao Yu'
-    },
-    createdAt: 1555016400000,
-    status: 'delivered'
-  },
-  {
-    id: uuid(),
-    ref: 'CDD1047',
-    amount: 10.99,
-    customer: {
-      name: 'Alexa Richardson'
-    },
-    createdAt: 1554930000000,
-    status: 'refunded'
-  },
-  {
-    id: uuid(),
-    ref: 'CDD1046',
-    amount: 96.43,
-    customer: {
-      name: 'Anje Keizer'
-    },
-    createdAt: 1554757200000,
-    status: 'pending'
-  },
-  {
-    id: uuid(),
-    ref: 'CDD1045',
-    amount: 32.54,
-    customer: {
-      name: 'Clarke Gillebert'
-    },
-    createdAt: 1554670800000,
-    status: 'delivered'
-  },
-  {
-    id: uuid(),
-    ref: 'CDD1044',
-    amount: 16.76,
-    customer: {
-      name: 'Adam Denisov'
-    },
-    createdAt: 1554670800000,
-    status: 'delivered'
-  }
-];
 
-export const LatestAssignments = (props) => (
+export const LatestAssignments = ({data, ...props}) => (
   <Card {...props}>
     <CardHeader title="Latest Assignments" />
     <PerfectScrollbar>
@@ -113,27 +52,27 @@ export const LatestAssignments = (props) => (
             </TableRow>
           </TableHead>
           <TableBody>
-            {orders.map((order) => (
+            {data?.map?.((item) => (
               <TableRow
                 hover
-                key={order.id}
+                key={item.id}
               >
                 <TableCell>
-                  {order.ref}
+                  {item.code}
                 </TableCell>
                 <TableCell>
-                  {order.customer.name}
+                  {item.instructor_name}
                 </TableCell>
                 <TableCell>
-                  {format(order.createdAt, 'dd/MM/yyyy')}
+                  {format(parseISO(item.due), 'dd/MM/yyyy')}
                 </TableCell>
                 <TableCell>
                   <SeverityPill
-                    color={(order.status === 'delivered' && 'success')
-                    || (order.status === 'refunded' && 'error')
-                    || 'warning'}
+                    color={(item.status === 'COMPLETED' && 'success')
+                    || (item.status === 'PENDING' && 'warning')
+                    || 'error'}
                   >
-                    {order.status}
+                    {item.status}
                   </SeverityPill>
                 </TableCell>
               </TableRow>
@@ -149,14 +88,18 @@ export const LatestAssignments = (props) => (
         p: 2
       }}
     >
+      <NextLink href="/dashboard/assignments">
+
       <Button
         color="primary"
         endIcon={<ArrowRightIcon fontSize="small" />}
         size="small"
         variant="text"
-      >
+        >
+
         View all
       </Button>
+        </NextLink>
     </Box>
   </Card>
 );

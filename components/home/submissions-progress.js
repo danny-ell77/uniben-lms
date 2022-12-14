@@ -1,7 +1,7 @@
 import { Avatar, Box, Card, CardContent, Grid, LinearProgress, Typography } from '@mui/material';
 import InsertChartIcon from '@mui/icons-material/InsertChartOutlined';
 
-export const SubmissionsProgress = (props) => (
+export const SubmissionsProgress = ({data, ...props}) => (
   <Card
     sx={{ height: '100%' }}
     {...props}
@@ -24,7 +24,7 @@ export const SubmissionsProgress = (props) => (
             color="textPrimary"
             variant="h4"
           >
-            75.5%
+            {data}%
           </Typography>
         </Grid>
         <Grid item>

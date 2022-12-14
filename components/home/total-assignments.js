@@ -2,7 +2,7 @@ import { Avatar, Box, Card, CardContent, Grid, Typography } from '@mui/material'
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import PeopleIcon from '@mui/icons-material/PeopleOutlined';
 
-export const TotalAssignments = (props) => (
+export const TotalAssignments = ({data, ...props}) => (
   <Card {...props}>
     <CardContent>
       <Grid
@@ -22,7 +22,7 @@ export const TotalAssignments = (props) => (
             color="textPrimary"
             variant="h4"
           >
-            35
+            {data}
           </Typography>
         </Grid>
         <Grid item>

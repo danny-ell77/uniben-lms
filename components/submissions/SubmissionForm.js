@@ -39,8 +39,8 @@ const ModalInnerBox = styled(Box)(({ theme }) => ({
 
 const SubmissionForm = ({ open, handleModal, data: otherInfo }) => {
   const [attachment, setAttachment] = useState(null)
-  const [directUploadStart, {isLoading: startLoading}] = useDirectUploadStartMutation()
-  const [directUploadFinish, {isLoading: finishLoading}] = useDirectUploadFinishMutation()
+  const [drafting, setDrafting] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
   const [createSubmission, { isLoading }] = useCreateSubmissionMutation();
   const [attachmentUploadFinish] = useAttachmentUploadFinishMutation()
   const { user } = useSelector((state) => state.auth);
@@ -49,11 +49,18 @@ const SubmissionForm = ({ open, handleModal, data: otherInfo }) => {
     title: "",
     content: "",
   });
+
   const save = (data) => {
     console.log(submission, otherInfo);
   };
-  const submit = async () => {
+
+  const submit = async ({is_draft = false}) => {
     if (!user?.student) return;
+    if (is_draft) {
+      setDrafting(true)
+    } else {
+      setSubmitting(true)
+    }
     const { title, content } = submission;
     const { assignmentId: assignment, instructor } = otherInfo;
     let classroom = user?.student.classroom.name;
@@ -68,13 +75,20 @@ const SubmissionForm = ({ open, handleModal, data: otherInfo }) => {
       instructor,
       classroom,
       has_attachment: Boolean(attachment),
+      is_draft,
+      status: is_draft ? "DRAFT" : "SUBMITTED",
       ...(Boolean(attachment) ? attachment_details : {})
     }
     const fulfilled = await createSubmission(payload).unwrap();
-    await directUploadDo(fulfilled.attachment)
-    await attachmentUploadFinish({file_id: fulfilled?.data?.id}).unwrap()
+    if (Boolean(attachment)) {
+      await directUploadDo(fulfilled.attachment)
+      await attachmentUploadFinish({file_id: fulfilled?.data?.id}).unwrap()
+    }
     handleModal({ submission: false });
+    setDrafting(false)
+    setSubmitting(false)
   };
+
   const handleEditorStateChange = (event) => {
     const content = JSON.stringify(convertToRaw(event.getCurrentContent()));
     setSubmission((prev) => ({ ...prev, content }));
@@ -85,13 +99,6 @@ const SubmissionForm = ({ open, handleModal, data: otherInfo }) => {
     setSubmission((prev) => ({ ...prev, [name]: value }));
   };
 
-    
-    // const _directUploadStart = async ({ file_name, file_type }) => {
-    //     const payload = { file_name, file_type, classroom: user?.student?.classroom.name}
-    //     console.log(payload)
-    //     const fulfilled = await directUploadStart(payload).unwrap()
-    //     return fulfilled
-    // }
     const directUploadDo = async (data) => {
         const postData = new FormData();
 
@@ -187,14 +194,19 @@ const SubmissionForm = ({ open, handleModal, data: otherInfo }) => {
               <p style={{display: "inline-block"}} overflow="hidden">{attachment?.name}</p><p style={{paddingLeft: 2, color: "red", display: "inline-block", cursor: "pointer"}} onClick={() => setAttachment(null)}>X</p>
             </Box>
             <Box>
-            <LoadingButton color="primary" variant="contained" sx={{ mx: 2 }}>
+              <LoadingButton
+                color="primary"
+                variant="contained"
+                sx={{ mx: 2 }} l
+                loading={drafting && (isLoading || uploading)}
+                onClick={() => submit({is_draft : true})}>
               Save Draft
             </LoadingButton>
             <LoadingButton
               color="primary"
               variant="contained"
               onClick={submit}
-              loading={isLoading || uploading}
+              loading={submitting && (isLoading || uploading)}
             >
               Submit
               </LoadingButton>

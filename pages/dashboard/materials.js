@@ -2,23 +2,34 @@ import { LoadingButton } from "@mui/lab"
 import { useState } from "react"
 import { useSelector } from "react-redux"
 import { DashboardLayout } from "../../components/Layout"
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
 import { useDirectUploadFinishMutation, useDirectUploadStartMutation, useGetCourseMaterialsQuery } from "../../lib/services/otherAPI"
+import {toast} from "../../lib/features/toast"
+const classOptions = [
+  { value: "CPE 500L", label: "CPE 500L" },
+  { value: "CPE 400L", label: "CPE 400L" },
+  { value: "CPE 300L", label: "CPE 300L" },
+  { value: "CPE 200L", label: "CPE 200L" },
+  { value: "CPE 100L", label: "CPE 100L" },
+];
 
 const CourseMaterials = () => {
     const { user } = useSelector(state => state.auth)
     const { data: {data = [] } = {} } = useGetCourseMaterialsQuery()
-    console.log(data)
     const [uploading, setUploading] = useState(false)
+    const [classroom, setClassroom] = useState(null)
     const [material, setMaterial] = useState(null)
     const [directUploadStart, {isLoading: startLoading}] = useDirectUploadStartMutation()
     const [directUploadFinish, {isLoading: finishLoading}] = useDirectUploadFinishMutation()
     
     const _directUploadStart = async ({ file_name, file_type }) => {
-        const payload = { file_name, file_type, classroom: user?.student?.classroom.name}
+        const payload = { file_name, file_type, classroom: classroom || user?.student?.classroom.name}
         console.log(payload)
         const fulfilled = await directUploadStart(payload).unwrap()
         return fulfilled
     }
+    
     const directUploadDo = async (data) => {
         const postData = new FormData();
 
@@ -44,8 +55,16 @@ const CourseMaterials = () => {
         setMaterial(file)
     }
 
+
+
     const uploadMaterial = async () => {
         if (!material) return
+        if (user?.instructor && !classroom) {
+            return toast({
+                type: "warning",
+                message: "A course material needs a classroom"
+            })
+        }
         const startFulfilled = await _directUploadStart({ file_name: material.name, file_type: material.type })
         console.log(startFulfilled)
         await directUploadDo(startFulfilled)
@@ -54,7 +73,26 @@ const CourseMaterials = () => {
     return (   
         <>
             <>Course Materials</>
-            <input type="file" onChange={handleFileChange}/>
+            <input type="file" onChange={handleFileChange} />
+            {user?.instructor && <Autocomplete
+                  // disablePortal
+                  id="classroom-demo"
+                  options={classOptions}
+                  isOptionEqualToValue={(option, value) =>
+                    option.value === value?.value
+                  }
+                onChange={(e, value) => {
+                    console.log(value);
+                    setClassroom(value.value);
+                  }}
+                  sx={{ width: 300, margin: 0 }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Class"
+                    />
+                  )}
+                />}
             <LoadingButton
               color="primary"
               variant="contained"

@@ -19,6 +19,7 @@ import { useGetAssignmentsQuery } from "../../lib/services/otherAPI";
 
 const Assignments = () => {
   const { data: { data = [] } = {} } = useGetAssignmentsQuery();
+
   const [modalMode, setModalMode] = useState({
     assignment: false,
     submission: false,

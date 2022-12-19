@@ -29,6 +29,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { DashboardLayout } from "../../components/Layout";
 import { ToolBar } from "../../components/shared/ToolBar";
+import { convertToRaw } from "draft-js";
 import { useEditSubmissionMutation, useGetSubmissionsQuery, useGetSingleAssignmentQuery } from "../../lib/services/otherAPI";
 import { LoadingButton } from "@mui/lab";
 
@@ -37,7 +38,8 @@ const MUIRichTextEditor = dynamic(() => import("mui-rte"), { ssr: false });
 
 const Row = (props) => {
   const { row } = props;
-
+  const { user: {instructor = null} } = useSelector((state) => state.auth);
+  const [content, setContent] = useState(row.content)
   const [editSubmission, { isLoading }] = useEditSubmissionMutation()
   const {data: {data: assignment = {}} = {}} = useGetSingleAssignmentQuery(row.assignment)
   const [open, setOpen] = React.useState(false);
@@ -63,10 +65,17 @@ const Row = (props) => {
       setScore(prev => ({...prev, [name]: value}))
   }
 
-  const submitScore = async () => {
-    console.log(score)
-    await editSubmission({id:row.id, body:score}).unwrap()
+  const updateSubmission = async ({ is_submitted = false }) => {
+    if (is_submitted) {
+      return await editSubmission({id:row.id, body: {is_submitted, is_draft: false, status: "SUBMITTED", content}}).unwrap()
+    }
+    return await editSubmission({id:row.id, body:{...score, content}}).unwrap()
   }
+
+  const handleEditorStateChange = (event) => {
+    const content = JSON.stringify(convertToRaw(event.getCurrentContent()));
+    setContent(content);
+  };
 
   return (
     <>
@@ -94,7 +103,7 @@ const Row = (props) => {
           {row.assignment.code}
         </TableCell> */}
         <TableCell>{assignment.course}</TableCell>
-        <TableCell>{row.instructor_name}</TableCell>
+        <TableCell>{instructor ? row.student_name : row.instructor_name}</TableCell>
         <TableCell>{row.status}</TableCell>
         <TableCell>{dueIn}</TableCell>
         <TableCell>{row.score}</TableCell>
@@ -130,8 +139,9 @@ const Row = (props) => {
 
                 <MUIRichTextEditor
                   readOnly={!edit}
-                  value={row.content}
+                  value={content}
                   toolbar={edit}
+                  onChange={handleEditorStateChange}
                   label="Type something here..."
                   inlineToolbar={edit}
                 />
@@ -140,6 +150,8 @@ const Row = (props) => {
                   Attachments:
                 </Typography>
                 <a target="_blank" href={row?.file}>{row?.file?.split("?")[0] ?? "--"}</a>
+                {instructor ? (
+                <>
                 <Typography variant="h6" gutterBottom component="div">
                   Instructor:
                 </Typography>
@@ -163,10 +175,19 @@ const Row = (props) => {
                       variant="outlined"
                     />
                   </Box>
-                  <LoadingButton color="primary" variant="contained" sx={{ mx: 2 }} onClick={submitScore} loading={isLoading}>
+                  <LoadingButton color="primary" variant="contained" sx={{ mx: 2 }} onClick={updateSubmission} loading={isLoading}>
                     Mark
                   </LoadingButton>
                 </Stack>
+                  </>
+                ) : row.is_draft && (<>
+                    <Stack direction="row" justifyContent="space-between">
+                    <LoadingButton color="primary" variant="contained" sx={{ mx: 2 }} onClick={() => updateSubmission({is_submitted: true})} loading={isLoading}>
+                    Submit
+                  </LoadingButton>
+                  </Stack>
+                </>)}
+                
               </Box>
             </Box>
           </Collapse>
@@ -181,7 +202,7 @@ const Submissions = () => {
   console.log(data)
   const [modalOpen, setModalOpen] = useState(false);
   const {
-    user: { student = null },
+    user: { student = {} },
   } = useSelector((state) => state.auth);
   const handleClose = () => setModalOpen(false);
   return (
@@ -201,7 +222,7 @@ const Submissions = () => {
                 <TableCell />
                 {/* <TableCell>Assignment Code</TableCell> */}
                 <TableCell>Course</TableCell>
-                <TableCell>{student ? "Instructor" : "Student"}</TableCell>
+                <TableCell>{Boolean(student) ? "Instructor" : "Student"}</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Due</TableCell>
                 <TableCell>Score</TableCell>

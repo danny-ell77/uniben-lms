@@ -41,7 +41,7 @@ export const SubmissionsProgress = ({data, ...props}) => (
       </Grid>
       <Box sx={{ pt: 3 }}>
         <LinearProgress
-          value={75.5}
+          value={data}
           variant="determinate"
         />
       </Box>

@@ -43,7 +43,7 @@ export const AccountProfile = (props) => {
             {accountUser?.full_name}
           </Typography>
           <Typography color="textSecondary" variant="body2">
-            {`${accountUser?.student.classroom.name}`}
+            {`${accountUser?.student?.classroom?.name}`}
           </Typography>
           <Typography color="textSecondary" variant="body2">
             {user?.timezone}

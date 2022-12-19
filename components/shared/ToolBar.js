@@ -8,13 +8,18 @@ import {
   SvgIcon,
   Typography,
 } from "@mui/material";
+import { useSelector } from "react-redux";
 
 function capitalize(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-export const ToolBar = ({ page, actionHandler, ...other }) => (
-  <Box {...other}>
+export const ToolBar = ({ page, actionHandler, ...other }) => {
+  const {
+    user: { instructor = null },
+  } = useSelector((state) => state.auth);
+  return (
+      <Box {...other}>
     <Box
       sx={{
         alignItems: "center",
@@ -28,9 +33,9 @@ export const ToolBar = ({ page, actionHandler, ...other }) => (
         {capitalize(page)}
       </Typography>
       <Box sx={{ m: 1 }}>
-        <Button color="primary" variant="contained" onClick={actionHandler}>
+        {instructor && <Button color="primary" variant="contained" onClick={actionHandler}>
           Add {page}
-        </Button>
+        </Button>}
       </Box>
     </Box>
     <Box sx={{ mt: 3 }}>
@@ -56,4 +61,6 @@ export const ToolBar = ({ page, actionHandler, ...other }) => (
       </Card>
     </Box>
   </Box>
-);
+  )
+}
+

@@ -103,7 +103,7 @@ const CourseMaterials = () => {
               Upload Material
             </LoadingButton>
             <ol>
-                {data.map((item) => (<li> key={item.id}<a href={item.file} target="_blank" rel="noreferrer">{item?.original_file_name} from { item.uploaded_by}</a></li>))}
+                {data.map((item) => (<li key={item.id}> <a href={item.file} target="_blank" rel="noreferrer">{item?.original_file_name} from { item.uploaded_by}</a></li>))}
             </ol>
         </>
     )

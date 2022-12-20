@@ -149,7 +149,7 @@ const Row = (props) => {
                 <Typography variant="h6" gutterBottom component="div">
                   Attachments:
                 </Typography>
-                <a target="_blank" href={row?.file}>{row?.file?.split("?")[0] ?? "--"}</a>
+                <a target="_blank" href={row?.file} rel="noreferrer">{row?.file?.split("?")[0] ?? "--"}</a>
                 {instructor ? (
                 <>
                 <Typography variant="h6" gutterBottom component="div">

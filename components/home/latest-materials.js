@@ -74,7 +74,7 @@ export const LatestMaterials = ({data, ...props}) => (
               }}
             />
           </ListItemAvatar> */}
-          <Link sx={{width: "100%", cursor: "pointer", textDecoration: "none"}} href={item?.file} target="_blank">
+          <Link sx={{width: "100%", cursor: "pointer", textDecoration: "none"}} href={item?.file} target="_blank" rel="noreferrer">
           <ListItemText
             primary={item.original_file_name}
             secondary={`Updated ${formatDistanceToNow(parseISO(item.upload_finished_at))} ago by ${item.uploaded_by}`}

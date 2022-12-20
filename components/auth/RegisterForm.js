@@ -45,7 +45,7 @@ export default function RegisterForm() {
       .email("Email must be a valid email address")
       .required("Email is required"),
     role: Yup.string().required("Please choose a role"),
-    classroom: Yup.string().required("Please choose the Class you belong to."),
+    classroom: Yup.string(),
     password: Yup.string()
       .required("Password is required")
       .matches(

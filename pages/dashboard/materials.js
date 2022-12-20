@@ -29,7 +29,7 @@ const CourseMaterials = () => {
         const fulfilled = await directUploadStart(payload).unwrap()
         return fulfilled
     }
-    
+
     const directUploadDo = async (data) => {
         const postData = new FormData();
 
@@ -103,7 +103,7 @@ const CourseMaterials = () => {
               Upload Material
             </LoadingButton>
             <ol>
-                {data.map((item) => (<li><a href={item.file} target="_blank">{item?.original_file_name} from { item.uploaded_by}</a></li>))}
+                {data.map((item) => (<li><a href={item.file} target="_blank" rel="noreferrer">{item?.original_file_name} from { item.uploaded_by}</a></li>))}
             </ol>
         </>
     )
